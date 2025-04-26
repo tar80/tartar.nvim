@@ -1,0 +1,249 @@
+*tartar.txt*                              Tar80's libraries and small functions
+
+Author: tar80 (https://github.com/tar80)
+License: Apache License
+Repository: https://github.com/tar80/tartar.nvim
+
+CONTENTS                                                      *tartar-contents*
+
+Introduction                                              |tartar-introduction|
+Usage                                                            |tartar-usage|
+Sauce                                                            |tartar-sauce|
+Test                                                              |tartar-test|
+
+==============================================================================
+INTRODUCTION                                              *tartar-introduction*
+
+*tartar.nvim* is provides a common library to ensure that multiple plugins
+developed by Tar80 can share the same functions.
+This eliminates the need to define the same functions repeatedly across
+different plugins, improving consistency and efficiency.
+In addition, it offers a few convenient utility functions.
+
+==============================================================================
+USAGE                                                            *tartar-usage*
+
+|tartar.nvim| must be required before any other plugins created by tar80.
+No further configuration is necessary.
+Additionally, to use the utility functions, call them individually.
+
+==============================================================================
+SAUSE                                                            *tartar-sauce*
+
+tartar provides some really trivial little convenience functions.
+Load and use the module as follows:
+
+>lua
+ local source = require('tartar.source')
+<
+
+------------------------------------------------------------------------------
+sauce.abbrev
+
+        Extends abbreviation functionality. Insert mode allows you to set
+        multiple matches for a single word, as is the original spelling
+        correction feature. In command mode, it acts as a command snippet.
+        First set the |abbrev.tbl| and register it with |abbrev:set()| method.
+
+        Fields ~
+            tbl: (table)
+                Table containing abbreviations.
+                {ia} ({[string]: string|string[]})
+                {ca} ({[string]: { |1|: {string, string?}, |2|: boolean })
+                • *ia*: Insert mode abbreviations. A table where keys are
+                  the correct spellings and values are a string or a table
+                  of possible misspellings.
+                • *ca*: Command mode snippets. A table where keys are the
+                  abbreviation triggers and values are a table containing:
+                  • *1*: A table containing the snippet (a string). If it
+                    contains two string, the second will used in a search
+                    command
+                  • *2*: A boolean indicating whether to omit a space after
+                    the snippet.
+
+            set: fun({self}, {mode})
+                Registers abbreviations for the specified mode.
+
+                Parameter: ~
+                    {mode}  (string):
+                        The mode for which to register abbreviations
+                        ("ia" for insert mode, "ca" for command mode).
+
+------------------------------------------------------------------------------
+sauce.align({hlgroup_spec})
+
+        Aligns the selected range using |vim.regex()| matches.
+        Based on https://github.com/RRethy/nvim-align
+
+        Parameter: ~
+            {hlgroup_spec?}  (string)
+                Default: 'IncSearch'
+                Highlight group used for the alignment blanks.
+
+------------------------------------------------------------------------------
+sauce.foldtext({separator_spec})
+
+        Provides easy and unobtrusive foldtext.
+        Based on https://github.com/tamton-aquib/essentials.nvim
+
+        Parameter: ~
+            {separator_spec?}  (string):
+                Default: '»'
+                Separator preceding the total fold count.
+
+------------------------------------------------------------------------------
+sauce.live_replace()
+
+    Immediate feedback on replacement status when selecting a rectangle.
+
+    Returns: ~
+        function(key, opts): *LiveReplace*
+
+|LiveReplace|
+
+    This is a function to register as a keymap.
+
+    Parameter: ~
+        {key}  (string):
+            Keys with alternative actions.
+        {opts} (table):
+
+        Fields ~
+            Table containing abbreviations.
+            • {after?}:      (boolean) Insert after cursor position.
+            • {fill?}:       (boolean) Fill virtual column with spaces.
+            • {higroup?}:    (string)  Highlight for curosor position.
+            • {is_replace?}: (boolean) Replace the selected range or not.
+            • {send_key?}:   (boolean) Set it to true for keys that change
+                the selection range itself, such as the |v_b_C| or |v_S| key.
+
+------------------------------------------------------------------------------
+sauce.plugkey({mode}, {name}, {prefix_key}, {is_repeatable})
+
+    This is a helper function to help register submode keys.
+
+    Parameter: ~
+        {mode}          (string|string[]):
+            Specifies a list of modes.
+
+        {name}          (string):
+            Plug-key name (used in `<Plug>(name)` mappings).
+            Must be a valid identifier.
+
+        {prefix_key}    (string):
+            A trigger key that starts the submode.
+
+        {is_repeatable} (boolean):
+            Whether the submode should be repeatable.
+
+    Return: ~
+        function({keys}, {replacekey})
+            Returned when |is_repeatable| is |true|.
+            Applies to repeat key submode.
+
+            Parameter: ~
+                {keys}    (string|string[]|{string,string}[]):
+                    Specifies the key to be repeated. By specifying
+                    a {string ,string} tuple, you can change which keys are
+                    actually inserte d and which keys are executed.
+                    The following example sets the window frame submode key.
+
+>lua
+ local plugkey = sauce.plugkey('n', 'replaceable_space', '<Space>', true)
+ plugkey({ '-', '<C-w>-' }, { ';', '<C-w>+' }, { ',', '<C-w><' }, { '.', '<C-w>>' } })
+<
+
+             {replacekey?}  (string):
+                 If {prefix_key} and {keys} are the same value,
+                 subsequent key repeats will be replaced with this value.
+
+        function({keys})
+            Returned when |is_repeatable| is |false|.
+            This function eliminates the waiting time for operator keys and
+            activates only registered keys.
+
+            Parameter: ~
+                {keys}    (string|string[]|{string,function}[]):
+                    Specify the key to activate. If you specify a tuple of
+                    `{string, function}`, assign the function to the key.
+
+>lua
+ local function toggle_recording()
+   return vim.fn.reg_recording() == '' and 'qq' or 'q'
+ end
+ local plugkey = sauce.plugkey('n', 'unique_q', 'q')
+ plugkey({ ':', '/', '?', { 'q', toggle_recording } })
+<
+
+------------------------------------------------------------------------------
+sauce.smart_zc({mode}, {initial_time)}
+
+    Maps the |zc| key to a smart foldclose function. If there's no
+    |v:foldlevel| defined at the cursor's current line, it will set
+    |vim.lsp.foldexpr()| if LSP is enabled, or |vim.treesitter.foldexpr()|
+    if Treesitter is enabled. Otherwise, it sends |zc| normally.
+
+    Parameter: ~
+        {mode?}         ("lsp"|"treesitter"|"both"):
+            Default: 'both'
+            Specify which expression to use.
+            • `lsp`: Use LSP's folding expression.
+            • `treesitter`: Use Treesitter's folding expression.
+            • `both`: Use LSP if available, otherwise Treesitter.
+
+        {initial_time?} (integer):
+            Default: 250
+            Language server initialization wait time in milliseconds.
+
+==============================================================================
+TEST                                                              *tartar-test*
+
+sauce.bench
+
+    Instant benchmarking module.
+
+    Methods ~
+        • run({loop_count}, {...}): (table)
+            Run the benchmark and return the results.
+
+            Parameters: ~
+                {loop_count}  (integer): Number of loops for each function
+                {...}         (fun():any[]): Benchmark contents
+            Returns: ~
+                { [`integer`]: [`number`, `any`] }
+                    • {number} measurement time
+                    • {any}    function return value
+        • print({loop_count}, {...})
+            Run the benchmark and `print()` the results.
+            The arguments are the same as `run()`. but no return value.
+
+        • notify({loop_count}, {...})
+            Run the benchmark and `vim.notify()` the results.
+            The arguments are the same as `run()`. but no return value.
+
+        • insert_template({is_notify}, {start_mark}, {end_mark})
+            Insert template and mark the start and end lines of the template
+        • clear()
+            Clear template range
+
+sauce.testmode({opts})
+
+    Register the user command `:PlenaryTestMode`. `:PlenaryTestMode` opens the
+    test file corresponding to the file currently being edited in a tab.
+    If it doesn't exist, create `root/tests/file_spec.lua` and open it in a tab.
+    At the same time,
+    • Register the environment variables |PLENARY_PATH| and |TEST_PATH|.
+    • If option is set, register |<localleader>| and key for
+      `:PlenaryTestHarness` execution.
+
+    Parameter: ~
+        {opts}  (table):
+
+        Fields: ~
+            • {localleader}: string
+              Specifies the <localleader> key.
+            • {test_key}: string
+              Specifies the execution key for `:PlenaryTestHarness`.
+
+==============================================================================
+vim:tw=78:sw=4:ts=8:ft=help:norl:noet:
