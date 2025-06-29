@@ -72,7 +72,7 @@ This function is based on [RRethy/nvim-align](https://github.com/RRethy/nvim-ali
 ---@param hlgroup_spec Hlgroup used for alignment blanks
 sauce.align(hlgroup_spec:"IncSearch")
 
-keymap.set('x', 'aa', function()
+vim.keymap.set('x', 'aa', function()
   reutn sauce.align('IncSearch')
 end, { desc = 'Tartar align' })
 ```
@@ -93,13 +93,13 @@ sauce.abbrev.tbl = {
   ia = {
     ['function'] = { 'funcion', 'fuction' },
     ['return'] = { 'reutnr', 'reutrn', 'retrun' },
-    ['true'] = 'true'
+    ['true'] = 'treu'
   },
   -- Command-mode snippets
   ---@alias Command     string  Commandline snippet
   ---@alias Search      string  Search-command snippet
   ---@alias IgnoreSpace boolean Omit a space after command
-  ---@type {[string]: {1:{Command, Search}, 2:IgnoreSpace}}
+  ---@type {[string]: [{{Command, Search}, IgnoreSpace}]}
   ca = {
     es = { { 'e<Space>++enc=cp932<Space>++ff=dos<CR>' } },
     e8 = { { 'e<Space>++enc=utf-8<CR>' } },
@@ -126,7 +126,7 @@ sauce.abbrev:set('ca')
 
 - **instant bench**
 
-Run the luascript benchmark instantly. It provides three functions for benchm ark
+Run the luascript benchmark instantly. It provides three functions for benchmark
 execution and a total of five methods for inserting and clearing templates.
 
 use it like this:
@@ -215,8 +215,6 @@ end, { desc = 'Tartar live_replace' })
 vim.keymap.set('v', 'C', function()
     live_rectangle_replace('C', { send_key = true })
 end, { desc = 'Tartar live_replace' })
-
-keymap.set('x', 'aa', sauce.align, { desc = 'Tartar align' })
 ```
 
 - **plug key**
@@ -307,14 +305,14 @@ There are four ways to specify the key mappings:
    These are submodes for moving window frames:
 
    ```lua
-    keymap.set('n', '<Space>-', '<C-w>-<Plug>(replaceable_space)')
-    keymap.set('n', '<Space>;', '<C-w>+<Plug>(replaceable_space)')
-    keymap.set('n', '<Space>,', '<C-w><<Plug>(replaceable_space)')
-    keymap.set('n', '<Space>.', '<C-w>><Plug>(replaceable_space)')
-    keymap.set('n', '<Plug>(replaceable_space)-', '<C-w>-<Plug>(replaceable_space)')
-    keymap.set('n', '<Plug>(replaceable_space);', '<C-w>+<Plug>(replaceable_space)')
-    keymap.set('n', '<Plug>(replaceable_space),', '<C-w><<Plug>(replaceable_space)')
-    keymap.set('n', '<Plug>(replaceable_space).', '<C-w>><Plug>(replaceable_space)')
+    vim.keymap.set('n', '<Space>-', '<C-w>-<Plug>(replaceable_space)')
+    vim.keymap.set('n', '<Space>;', '<C-w>+<Plug>(replaceable_space)')
+    vim.keymap.set('n', '<Space>,', '<C-w><<Plug>(replaceable_space)')
+    vim.keymap.set('n', '<Space>.', '<C-w>><Plug>(replaceable_space)')
+    vim.keymap.set('n', '<Plug>(replaceable_space)-', '<C-w>-<Plug>(replaceable_space)')
+    vim.keymap.set('n', '<Plug>(replaceable_space);', '<C-w>+<Plug>(replaceable_space)')
+    vim.keymap.set('n', '<Plug>(replaceable_space),', '<C-w><<Plug>(replaceable_space)')
+    vim.keymap.set('n', '<Plug>(replaceable_space).', '<C-w>><Plug>(replaceable_space)')
 
 
     local replaceable_space = sauce.plugkey('n', 'replaceable_space', '<Space>', true)
