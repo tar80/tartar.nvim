@@ -146,21 +146,15 @@ return function(unique_name, ns, augroup)
     s, e, modified = _normalize_range(bufnr, s, e, fill_in)
     _set_autocmd(s, e, opts.after, modified)
     local width = _adjust_width(opts, s, e)
-    if not opts.send_key then
-      if modified then
-        vim.schedule(function()
-          _cursor_marker(bufnr, s[1] - 1, width[1], e[1] - 1, width[2] + 1, opts.higroup)
-        end)
-      else
-        _cursor_marker(bufnr, s[1] - 1, width[1], e[1] - 1, width[2] + 1, opts.higroup)
-      end
-    end
     vim.schedule(function()
       vim.api.nvim_buf_set_mark(bufnr, '<', s[1], width[1], {})
       vim.api.nvim_buf_set_mark(bufnr, '>', e[1], width[2], {})
       local input = (':*%s'):format(opts.is_replace and replace or insert)
       vim.api.nvim_feedkeys(input, 'n', false)
       vim.opt.eventignore:remove('CmdlineChanged')
+      if not opts.send_key then
+        _cursor_marker(bufnr, s[1] - 1, width[1], e[1] - 1, width[2] + 1, opts.higroup)
+      end
     end)
   end
 end
