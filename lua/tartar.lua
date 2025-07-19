@@ -44,6 +44,7 @@ end
 function tartar.setup()
   local beacon = _require('tartar.beacon')
   local compat = _require('tartar.compat')
+  local file = _require('tartar.file')
   local helper = _require('tartar.helper')
   local highlight = _require('tartar.highlight')
   local lsp = _require('tartar.lsp')
@@ -59,6 +60,9 @@ function tartar.setup()
   package.loaded['fret.helper'] = helper
   package.loaded['fret.timer'] = timer
   package.loaded['fret.util'] = util
+  package.loaded['ori.file'] = file
+  package.loaded['ori.highlight'] = highlight
+  package.loaded['ori.util'] = util
   package.loaded['rereope.beacon'] = beacon
   package.loaded['rereope.compat'] = compat
   package.loaded['rereope.helper'] = helper
