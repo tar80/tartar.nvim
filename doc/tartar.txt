@@ -24,7 +24,11 @@ In addition, it offers a few convenient utility functions.
 USAGE                                                            *tartar-usage*
 
 |tartar.nvim| must be required before any other plugins created by tar80.
-No further configuration is necessary.
+Please run the setup to use the module sharing function.
+>
+require('tartar').setup()
+<
+
 Additionally, to use the utility functions, call them individually.
 
 ==============================================================================
