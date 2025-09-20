@@ -9,6 +9,7 @@ tartar.nvim includes common resources used in the following projects.
 
 - [Fret.nvim](https://github.com/tar80/fret.nvim)
 - [Matchwith.nvim](https://github.com/tar80/matchwith.nvim)
+- [Ori.nvim](https://github.com/tar80/ori.nvim)
 - [Rereope.nvim](https://github.com/tar80/rereope.nvim)
 - [Staba.nvim](https://github.com/tar80/staba.nvim)
 
@@ -73,7 +74,7 @@ This function is based on [RRethy/nvim-align](https://github.com/RRethy/nvim-ali
 sauce.align(hlgroup_spec:"IncSearch")
 
 vim.keymap.set('x', 'aa', function()
-  reutn sauce.align('IncSearch')
+  return sauce.align('IncSearch')
 end, { desc = 'Tartar align' })
 ```
 
