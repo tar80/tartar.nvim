@@ -3,10 +3,13 @@
 ---@alias VisualEndPoint TaplePosition
 
 ---@class LiveReplaceOpts
----@field is_replace? boolean Whether to replace the selected range
 ---@field after? boolean Insert after cursor position
+---@field zero? boolean Insert zero column position
 ---@field fill? boolean Fill virtual column with spaces
----@field send_key? boolean
+---@field is_replace? boolean Whether to replace the selected range
+---@field send_key? boolean @deprecated
+---@field overwrite? boolean Whether to send keys that overwrite the selection
+---@field linewise_blockify? boolean Enables block editing in linewise visual mode
 ---@field higroup? string Highlight for cursor position marker
 
 return function(unique_name, ns, augroup)
@@ -121,24 +124,52 @@ return function(unique_name, ns, augroup)
     return _width
   end
 
+  local hatpos = vim.api.nvim_replace_termcodes('<C-v>^o^', true, false, true)
   local esc = vim.api.nvim_replace_termcodes('<Esc>', true, false, true)
   local cursor_back = vim.api.nvim_replace_termcodes('<Left><Left>', true, false, true)
   local insert = [[s/\%V//g]] .. cursor_back
   local replace = [[s/\%V.*\%V.//g]] .. cursor_back
+  local add = [[s/$//g]] .. cursor_back
 
   ---@param key string
   ---@param opts? LiveReplaceOpts
   return function(key, opts)
-    if not helper.is_blockwise() then
-      vim.api.nvim_feedkeys(key, 'n', false)
+    opts = opts or {}
+    if opts.send_key then
+      opts.overwrite = opts.overwrite or opts.send_key
+      vim.notify_once(
+        [=[tartar.nvim(live_rectangle_replace): The "send_key" option has been renamed to "overwrite".]=],
+        vim.log.levels.WARN,
+        {}
+      )
+    end
+    local bufnr = vim.api.nvim_win_get_buf(0)
+    local mode = vim.api.nvim_get_mode().mode
+    if not helper.is_blockwise(mode) then
+      if mode == 'V' and opts.linewise_blockify then
+        if opts.after then
+          vim.api.nvim_feedkeys(':' .. add, 'n', false)
+        else
+          if opts.zero then
+            vim.api.nvim_feedkeys('0', 'n', false)
+          else
+            vim.api.nvim_feedkeys(hatpos, 'n', false)
+          end
+          vim.schedule(function()
+            vim.api.nvim_feedkeys(':' .. insert, 'n', false)
+            local s, e, _ = helper.get_selected_range(1, 0, true)
+            _cursor_marker(bufnr, s[1] - 1, s[2], e[1] - 1, s[2] + 1, opts.higroup)
+          end)
+        end
+      else
+        vim.api.nvim_feedkeys(key, 'n', false)
+      end
       return
     end
-    opts = opts or {}
-    opts.fill = opts.fill or opts.send_key
-    local bufnr = vim.api.nvim_win_get_buf(0)
+    opts.fill = opts.fill or opts.overwrite
     local base_col = opts.after and 1 or 0
     local s, e, _ = helper.get_selected_range(1, base_col, true)
-    local leave = opts.send_key and key .. esc or esc
+    local leave = opts.overwrite and key .. esc or esc
     vim.api.nvim_feedkeys(leave, 'n', false)
     vim.opt.eventignore:append('CmdlineChanged')
     local modified = false
@@ -149,10 +180,10 @@ return function(unique_name, ns, augroup)
     vim.schedule(function()
       vim.api.nvim_buf_set_mark(bufnr, '<', s[1], width[1], {})
       vim.api.nvim_buf_set_mark(bufnr, '>', e[1], width[2], {})
-      local input = (':*%s'):format(opts.is_replace and replace or insert)
+      local input = ':*' .. (opts.is_replace and replace or insert)
       vim.api.nvim_feedkeys(input, 'n', false)
       vim.opt.eventignore:remove('CmdlineChanged')
-      if not opts.send_key then
+      if not opts.overwrite then
         _cursor_marker(bufnr, s[1] - 1, width[1], e[1] - 1, width[2] + 1, opts.higroup)
       end
     end)
