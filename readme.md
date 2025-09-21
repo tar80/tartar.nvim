@@ -23,7 +23,7 @@ require('tartar').setup()
 
 ## Secret sauce
 
-`tartar.sauce` provides some really trivial little convenience functions.
+`tartar.sauce` provides some really trivial little convenience functions.  
 This can be used independently regardless of the module sharing function.
 
 ```lua
@@ -84,7 +84,7 @@ end, { desc = 'Tartar align' })
 
 Extend abbreviation functionality. Insert mode allows you to set multiple matches
 for a single word, as is the original spelling correction feature. In command mode,
-it acts as a command snippet.
+it acts as a command snippet.  
 First set the `abbrev.tbl` and register it with `abbrev:set()` method.
 
 ```lua
@@ -149,7 +149,7 @@ end, function()
 end)
 ```
 
-If you load a `insert_template()` you can run mark range.
+If you load a `insert_template()` you can run mark range.  
 `:'a,'bsource %`
 
 ```lua
@@ -182,6 +182,7 @@ If you load a `insert_template()` you can run mark range.
 - **live rectangle replacement**
 
 Immediate feedback on replacement status when selecting a rectangle.
+
 This sauce is modeled after the linewise selection behavior of [vim-niceblock](https://github.com/kana/vim-niceblock).
 
 > [!CAUTION]
@@ -229,7 +230,7 @@ end, { desc = 'Tartar live_replace' })
 
 - **plug key**
 
-This is a helper function to help register submode keys.
+This is a helper function to help register submode keys.  
 Facilitates the registration of keys like those introduced in the article below.
 
 [Vim で折り返し行を簡単に移動できるサブモード・テクニック](https://zenn.dev/mattn/articles/83c2d4c7645faa)
@@ -278,6 +279,7 @@ There are four ways to specify the key mappings:
    ```
 
 1. **Enabling continuous key input, such as `gj` becoming `gjjjjj` or `zl` becoming `zllll`:**
+
    In this pattern, a table is specified as an argument to the closure function.
 
    These are submodes for moving the lap line:
@@ -309,7 +311,8 @@ There are four ways to specify the key mappings:
    ```
 
 1. **Enabling continuous key input. Executes the key you type and another key**
-   In this pattern, a table is specified as an argument to the closure function.
+
+   In this pattern, a table is specified as an argument to the closure function.  
    Additionally, for the table element, specify a tuple of {"input key", "execution key"}
 
    These are submodes for moving window frames:
@@ -331,6 +334,7 @@ There are four ways to specify the key mappings:
    ```
 
 1. **Sending a different key after the same key is entered consecutively:**
+
    In this pattern, the first argument of the closure function specifies the
    input key, and the second argument specifies the key to be sent on subsequent inputs.
 
@@ -360,7 +364,7 @@ There are four ways to specify the key mappings:
 Supports running plenary tests. Loading this module sets the user command `PlenaryTestMode`.
 `PlenaryTestMode` opens the file `root/tests/name_spec.lua` corresponding to
 the executed buffer in a tab. If `root/tests` does not exist, it will be created.
-Also, `localleader` is set to the buffer where the test file was opened.
+Also, `localleader` is set to the buffer where the test file was opened.  
 The local reader is registered with a key to run `plenary.test_harness.test_file()`.
 
 > [!CAUTION]
