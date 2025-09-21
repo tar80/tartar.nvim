@@ -42,13 +42,13 @@ or `vim.treesitter.foldexpr()` if Treesitter is enabled. Otherwise, it sends `zc
 sauce.map_smart_zc(mod:"both", initial_time:250)
 ```
 
-![smart_zc](https://github.com/user-attachments/assets/34f218e6-18ad-47bc-a308-129998e5d7f3)
+![smart\_zc](https://github.com/user-attachments/assets/34f218e6-18ad-47bc-a308-129998e5d7f3)
 
 - **foldtext**
 
 Provides easy and unobtrusive foldtext.
 
-This function is based on [tamton-aquib/essentials.nvim](https://github.com/tamton-aquib/essentials.nvim)
+This sauce is based on [tamton-aquib/essentials.nvim](https://github.com/tamton-aquib/essentials.nvim).
 
 ```lua
 ---@param separator_spec Separator preceding the total fold count.
@@ -60,7 +60,7 @@ sauce.foldtext(separator_spec:"»")
 Provides an extremely simple align function. Aligns the selected range using
 vim.regex() matches.
 
-This function is based on [RRethy/nvim-align](https://github.com/RRethy/nvim-align)
+This sauce is based on [RRethy/nvim-align](https://github.com/RRethy/nvim-align).
 
 > [!CAUTION]
 >
@@ -84,7 +84,7 @@ end, { desc = 'Tartar align' })
 
 Extend abbreviation functionality. Insert mode allows you to set multiple matches
 for a single word, as is the original spelling correction feature. In command mode,
-it acts as a command snippet.  
+it acts as a command snippet.
 First set the `abbrev.tbl` and register it with `abbrev:set()` method.
 
 ```lua
@@ -149,7 +149,7 @@ end, function()
 end)
 ```
 
-If you load a `insert_template()` you can run mark range.  
+If you load a `insert_template()` you can run mark range.
 `:'a,'bsource %`
 
 ```lua
@@ -182,6 +182,7 @@ If you load a `insert_template()` you can run mark range.
 - **live rectangle replacement**
 
 Immediate feedback on replacement status when selecting a rectangle.
+This sauce is modeled after the linewise selection behavior of [vim-niceblock](https://github.com/kana/vim-niceblock).
 
 > [!CAUTION]
 >
@@ -189,11 +190,15 @@ Immediate feedback on replacement status when selecting a rectangle.
 
 ```lua
 ---@class LiveReplaceOpts
----@field after? boolean Insert after cursor position
----@field fill? boolean Fill virtual column with spaces
 ---@field higroup? string Highlight for cursor position
+---@field after? boolean Insert after cursor position
+---@field zero? boolean Insert zero column position
+---@field fill? boolean Fill virtual column with spaces
 ---@field is_replace? boolean Whether to replace the selected range
----@field send_key? boolean Set it to true for keys that change the selection range itself, such as the C or S key.
+---@field overwrite? boolean Set it to true for keys that change the selection range itself, such as the C or S key
+---@field linewise_blockify? boolean Like vim-niceblock, virtual blockwise-put even for linewise-visual-mode
+
+---@field send_key? (DEPRECATED) renamed to `overwrite`
 
 ---@alias LiveReplace
 ---@param key string
@@ -202,11 +207,15 @@ Immediate feedback on replacement status when selecting a rectangle.
 local live_rectangle_replace = sauce.live_replace()
 
 vim.keymap.set('v', 'I', function()
-    live_rectangle_replace('I')
+    live_rectangle_replace('I', { linewise_blockify = true })
+end, { desc = 'Tartar live_replace' })
+
+vim.keymap.set('v', 'gI', function()
+    live_rectangle_replace('I', { linewise_blockify = true, zero = true })
 end, { desc = 'Tartar live_replace' })
 
 vim.keymap.set('v', 'A', function()
-    live_rectangle_replace('A', { after = true, fill = true })
+    live_rectangle_replace('A', { after = true, fill = true, linewise_blockify = true })
 end, { desc = 'Tartar live_replace' })
 
 vim.keymap.set('v', 'c', function()
@@ -214,7 +223,7 @@ vim.keymap.set('v', 'c', function()
 end, { desc = 'Tartar live_replace' })
 
 vim.keymap.set('v', 'C', function()
-    live_rectangle_replace('C', { send_key = true })
+    live_rectangle_replace('C', { overwrite = true })
 end, { desc = 'Tartar live_replace' })
 ```
 
@@ -238,7 +247,7 @@ sauce.plugkey(mode, name, prefix_key, is_repeatable)
 
 There are four ways to specify the key mappings:
 
-1. **Specifying allowed keys:**  
+1. **Specifying allowed keys:**
    For example, if you set key mappings like this:
 
    ```lua
@@ -268,7 +277,7 @@ There are four ways to specify the key mappings:
    unique_q({ ':', '/', '?', { 'q', toggle_recording } })
    ```
 
-1. **Enabling continuous key input, such as `gj` becoming `gjjjjj` or `zl` becoming `zllll`:**  
+1. **Enabling continuous key input, such as `gj` becoming `gjjjjj` or `zl` becoming `zllll`:**
    In this pattern, a table is specified as an argument to the closure function.
 
    These are submodes for moving the lap line:
@@ -299,8 +308,8 @@ There are four ways to specify the key mappings:
    repeatable_z({ 'h', 'l' })
    ```
 
-1. **Enabling continuous key input. Executes the key you type and another key**  
-   In this pattern, a table is specified as an argument to the closure function.  
+1. **Enabling continuous key input. Executes the key you type and another key**
+   In this pattern, a table is specified as an argument to the closure function.
    Additionally, for the table element, specify a tuple of {"input key", "execution key"}
 
    These are submodes for moving window frames:
@@ -321,7 +330,7 @@ There are four ways to specify the key mappings:
     replaceable_space({ { '-', '<C-w>-' }, { ';', '<C-w>+' }, { ',', '<C-w><' }, { '.', '<C-w>>' } })
    ```
 
-1. **Sending a different key after the same key is entered consecutively:**  
+1. **Sending a different key after the same key is entered consecutively:**
    In this pattern, the first argument of the closure function specifies the
    input key, and the second argument specifies the key to be sent on subsequent inputs.
 
@@ -348,7 +357,7 @@ There are four ways to specify the key mappings:
 
 - **testmode**
 
-Supports running plenary tests. Loading this module sets the user command `PlenaryTestMode`.  
+Supports running plenary tests. Loading this module sets the user command `PlenaryTestMode`.
 `PlenaryTestMode` opens the file `root/tests/name_spec.lua` corresponding to
 the executed buffer in a tab. If `root/tests` does not exist, it will be created.
 Also, `localleader` is set to the buffer where the test file was opened.
@@ -369,3 +378,9 @@ sauce.testmode(opts)
 -- For example, you can set it like this
 sauce.testmode({localleader = '\\', test_key = '<LocalLeader><LocalLeader>'})
 ```
+
+## Acknowledgments
+
+- [tamton-aquib/essentials.nvim](https://github.com/tamton-aquib/essentials.nvim)
+- [RRethy/nvim-align](https://github.com/RRethy/nvim-align)
+- [vim-niceblock](https://github.com/kana/vim-niceblock)
