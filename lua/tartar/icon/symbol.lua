@@ -66,6 +66,12 @@ M.ime = {
 M.git = {
   branch = '',
   branch2 = '',
+  branch3 = ''
+}
+M.status = {
+  done = ' ',
+  missing = ' ',
+  pending = ' ',
 }
 
 return M
