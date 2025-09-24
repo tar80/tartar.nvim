@@ -149,8 +149,7 @@ end, function()
 end)
 ```
 
-If you load a `insert_template()` you can run mark range.  
-`:'a,'bsource %`
+If you load a `insert_template()` you can run mark range.`:'a,'bsource`
 
 ```lua
     -- Run the benchmark and return the results
@@ -249,6 +248,7 @@ sauce.plugkey(mode, name, prefix_key, is_repeatable)
 There are four ways to specify the key mappings:
 
 1. **Specifying allowed keys:**
+
    For example, if you set key mappings like this:
 
    ```lua
@@ -310,7 +310,7 @@ There are four ways to specify the key mappings:
    repeatable_z({ 'h', 'l' })
    ```
 
-1. **Enabling continuous key input. Executes the key you type and another key**
+1. **Enabling continuous key input. Executes the key you type and another key:**
 
    In this pattern, a table is specified as an argument to the closure function.  
    Additionally, for the table element, specify a tuple of {"input key", "execution key"}
