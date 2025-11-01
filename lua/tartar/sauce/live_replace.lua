@@ -145,8 +145,9 @@ return function(unique_name, ns, augroup)
     end
     local bufnr = vim.api.nvim_win_get_buf(0)
     local mode = vim.api.nvim_get_mode().mode
+    vim.print(mode, helper.is_blockwise(mode))
     if not helper.is_blockwise(mode) then
-      if mode == 'V' and opts.linewise_blockify then
+      if opts.linewise_blockify and mode:find('[vV]') then
         if opts.after then
           vim.api.nvim_feedkeys(':' .. add, 'n', false)
         else
