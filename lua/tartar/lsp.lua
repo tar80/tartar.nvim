@@ -1,6 +1,12 @@
 local M = {}
 local lsp = vim.lsp
 
+---@param bufnr integer
+---@return boolean
+function M.has_clients(bufnr)
+  return #lsp.get_clients({ bufnr = bufnr }) > 0
+end
+
 ---@generic serverName string
 ---@alias ServerNames serverName[]
 
@@ -30,8 +36,12 @@ function M.buf_get_clients()
 end
 
 ---@param clients Clients
-function M.buf_detach_clients(clients)
+---@param name? string
+function M.buf_detach_clients(clients, name)
   vim.iter(clients.ids):each(function(id)
+    if name and clients[id].name ~= name then
+      return
+    end
     lsp.buf_detach_client(0,id)
   end)
 end
