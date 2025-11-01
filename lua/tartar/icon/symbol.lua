@@ -25,12 +25,13 @@ M.mark = {
   circle_s = '',
   circle_sl = '',
   circle_sr = '',
-  round_square_s =  '',
+  round_square_s = '',
   round_square_l = '󱓻',
   square_s = '■',
   square_l = '󰄮',
   star = '󰙴',
 }
+---@deprecated
 M.access = {
   success = '',
   failure = '',
@@ -66,11 +67,13 @@ M.ime = {
 M.git = {
   branch = '',
   branch2 = '',
-  branch3 = ''
+  branch3 = '',
 }
 M.status = {
   done = ' ',
   missing = ' ',
+  success = '',
+  failure = '',
   pending = ' ',
 }
 
