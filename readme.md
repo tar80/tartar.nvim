@@ -51,7 +51,7 @@ Provides easy and unobtrusive foldtext.
 This sauce is based on [tamton-aquib/essentials.nvim](https://github.com/tamton-aquib/essentials.nvim).
 
 ```lua
----@param separator_spec Separator preceding the total fold count.
+---@param separator_spec? Separator preceding the total fold count.
 sauce.foldtext(separator_spec:"»")
 ```
 
@@ -70,8 +70,8 @@ This sauce is based on [RRethy/nvim-align](https://github.com/RRethy/nvim-align)
 > - Due to circumstances, grouping is not possible. `[` is always replaced with `\[`.
 
 ```lua
----@param hlgroup_spec Hlgroup used for alignment blanks
-sauce.align(hlgroup_spec:"IncSearch")
+---@param hlgroup_spec? Hlgroup used for alignment blanks
+---sauce.align(hlgroup_spec:"IncSearch")
 
 vim.keymap.set('x', 'aa', function()
   return sauce.align('IncSearch')
@@ -226,6 +226,8 @@ vim.keymap.set('v', 'C', function()
     live_rectangle_replace('C', { overwrite = true })
 end, { desc = 'Tartar live_replace' })
 ```
+
+![live_replace](https://github.com/user-attachments/assets/07783440-3e4c-43d6-a16e-a6cbf04d3ada)
 
 - **plug key**
 
@@ -387,4 +389,4 @@ sauce.testmode({localleader = '\\', test_key = '<LocalLeader><LocalLeader>'})
 
 - [tamton-aquib/essentials.nvim](https://github.com/tamton-aquib/essentials.nvim)
 - [RRethy/nvim-align](https://github.com/RRethy/nvim-align)
-- [vim-niceblock](https://github.com/kana/vim-niceblock)
+- [kana/vim-niceblock](https://github.com/kana/vim-niceblock)

@@ -14,6 +14,7 @@ Test                                                              |tartar-test|
 Deprecated                                                  |tartar-deprecated|
 
 ==============================================================================
+
 INTRODUCTION                                              *tartar-introduction*
 
 *tartar.nvim* is provides a common library to ensure that multiple plugins
@@ -23,6 +24,7 @@ different plugins, improving consistency and efficiency.
 In addition, it offers a few convenient utility functions.
 
 ==============================================================================
+
 USAGE                                                            *tartar-usage*
 
 |tartar.nvim| must be required before any other plugins created by tar80.
@@ -34,6 +36,7 @@ require('tartar').setup()
 Additionally, to use the utility functions, call them individually.
 
 ==============================================================================
+
 SAUSE                                                            *tartar-sauce*
 
 tartar provides some really trivial little convenience functions.
@@ -44,6 +47,7 @@ Load and use the module as follows:
 <
 
 ------------------------------------------------------------------------------
+
 sauce.abbrev
 
         Extends abbreviation functionality. Insert mode allows you to set
@@ -76,6 +80,7 @@ sauce.abbrev
                         ("ia" for insert mode, "ca" for command mode).
 
 ------------------------------------------------------------------------------
+
 sauce.align({hlgroup_spec})
 
         Aligns the selected range using |vim.regex()| matches.
@@ -87,6 +92,7 @@ sauce.align({hlgroup_spec})
                 Highlight group used for the alignment blanks.
 
 ------------------------------------------------------------------------------
+
 sauce.foldtext({separator_spec})
 
         Provides easy and unobtrusive foldtext.
@@ -98,6 +104,7 @@ sauce.foldtext({separator_spec})
                 Separator preceding the total fold count.
 
 ------------------------------------------------------------------------------
+
 sauce.live_replace()
 
     Immediate feedback on replacement status when selecting a rectangle.
@@ -128,6 +135,7 @@ sauce.live_replace()
                 virtual blockwise-put even for linewise-visual-mode
 
 ------------------------------------------------------------------------------
+
 sauce.plugkey({mode}, {name}, {prefix_key}, {is_repeatable})
 
     This is a helper function to help register submode keys.
@@ -186,6 +194,7 @@ sauce.plugkey({mode}, {name}, {prefix_key}, {is_repeatable})
 <
 
 ------------------------------------------------------------------------------
+
 sauce.smart_zc({mode}, {initial_time)}
 
     Maps the |zc| key to a smart foldclose function. If there's no
@@ -206,6 +215,7 @@ sauce.smart_zc({mode}, {initial_time)}
             Language server initialization wait time in milliseconds.
 
 ==============================================================================
+
 TEST                                                              *tartar-test*
 
 sauce.bench
@@ -244,7 +254,7 @@ sauce.testmode({opts})
     At the same time,
     • Register the environment variables |PLENARY_PATH| and |TEST_PATH|.
     • If option is set, register |<localleader>| and key for
-      `:PlenaryTestHarness` execution.
+    `:PlenaryTestHarness` execution.
 
     Parameter: ~
         {opts}  (table):
@@ -264,5 +274,5 @@ DEPRECATED                                                   *tartar-deprecated*
         This option was used by live_replace, but has been renamed to the
         |overwrite| option.
 
-==============================================================================
+------------------------------------------------------------------------------
 vim:tw=78:sw=4:ts=8:ft=help:norl:noet:
