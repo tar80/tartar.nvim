@@ -89,7 +89,7 @@ function M.get_node(root, range, opts)
     end
   elseif type(root) == 'userdata' then
     return nil, root:named_descendant_for_range(unpack(range))
-    end
+  end
 end
 
 -- Get the smallest node at the position
@@ -110,12 +110,12 @@ end
 ---@return string
 function M.get_text_at_pos(bufnr, node, top, bottom)
   local s_row, s_col, e_row, e_col = node:range()
-  if top then
-    s_row = math.max(top, s_row)
-      end
-  if bottom then
-    e_row = math.min(bottom, e_row)
-    end
+  if top and top > s_row then
+    s_row, s_col = 0, 0
+  end
+  if bottom and bottom < e_row then
+    e_row, e_col = bottom, vim.fn.col({ e_row, '$' })
+  end
   local lines = vim.api.nvim_buf_get_text(bufnr, s_row, s_col, e_row, e_col, {})
   return table.concat(lines, '\n')
 end
