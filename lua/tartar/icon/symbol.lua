@@ -76,5 +76,9 @@ M.status = {
   failure = '',
   pending = ' ',
 }
+M.copilot = {
+  enable = '',
+  disable = '',
+}
 
 return M
