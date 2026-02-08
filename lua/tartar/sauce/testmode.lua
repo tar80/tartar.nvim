@@ -77,7 +77,7 @@ return function(UNIQUE_NAME, opts)
         vim.api.nvim_del_keymap('n', opts.test_key)
         vim.api.nvim_del_keymap('n', opts.abort_mode_key)
         vim.notify('Aborted PlenaryTestMode.', vim.log.levels.INFO, { 'PlenaryTestMode' })
-      end, { desc = ('[%s] aborted PlenaryTestMode'):format(UNIQUE_NAME) })
+      end, { desc = ('[%s] abort PlenaryTestMode'):format(UNIQUE_NAME) })
     end
   end, {})
 end
