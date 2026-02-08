@@ -253,6 +253,7 @@ sauce.testmode({opts})
     If it doesn't exist, create `root/tests/file_spec.lua` and open it in a tab.
     At the same time,
     • Register the environment variables |PLENARY_PATH| and |TEST_PATH|.
+    • |TEST_PATH| is updated when the current buffer is xxx_spec.lua.
     • If option is set, register |<localleader>| and key for
     `:PlenaryTestHarness` execution.
 
@@ -264,6 +265,9 @@ sauce.testmode({opts})
               Specifies the <localleader> key.
             • {test_key}: string
               Specifies the execution key for `:PlenaryTestHarness`.
+            • {abort_mode_key}: string
+              Specifies the aborted key for `PlenaryTestMode`.
+
 
 
 ==============================================================================

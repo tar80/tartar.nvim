@@ -377,12 +377,13 @@ The local reader is registered with a key to run `plenary.test_harness.test_file
 ---@class TestModeOpts
 ---@field localleader string localleader set to the buffer that opened the test file
 ---@field test_key string Specifies the key to run plenary.test_harness.test_file()
+---@field abort_mode_key string Specifies the key to abort PlenaryTestMode
 
 ---@param opts TestModeOpts
 sauce.testmode(opts)
 
 -- For example, you can set it like this
-sauce.testmode({localleader = '\\', test_key = '<LocalLeader><LocalLeader>'})
+sauce.testmode({localleader = '\\', test_key = '<LocalLeader><LocalLeader>'}, abort_mode_key = '<LocalLeader>q')
 ```
 
 ## Acknowledgments

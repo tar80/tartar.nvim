@@ -1,12 +1,14 @@
 ---@class Opts
 ---@field localleader string
 ---@field test_key string
+---@field abort_mode_key string
 
 ---@param UNIQUE_NAME string
 ---@param opts Opts
 return function(UNIQUE_NAME, opts)
   vim.validate('localleader', opts.localleader, 'string', false)
-  vim.validate('test_key', opts.test_key, 'string', false)
+  vim.validate('test_key', opts.test_key, 'string', true)
+  vim.validate('abort_mode_key', opts.abort_mode_key, 'string', true)
 
   local helper = require('tartar.helper')
   local util = require('tartar.util')
@@ -55,12 +57,27 @@ return function(UNIQUE_NAME, opts)
 
     if opts.test_key then
       vim.keymap.set('n', opts.test_key, function()
-        if vim.uv.fs_stat(vim.env.TEST_PATH) then
+        local _bufname = vim.api.nvim_buf_get_name(0)
+        if _bufname:find('_spec.lua$') then
+          vim.env.TEST_PATH = _bufname
+          require('plenary.test_harness').test_file(vim.env.TEST_PATH)
+        elseif vim.uv.fs_stat(vim.env.TEST_PATH) then
           require('plenary.test_harness').test_file(vim.env.TEST_PATH)
         else
           vim.notify('Path not found.', vim.log.levels.ERROR, { 'PlenaryTestHarness' })
         end
       end, { desc = ('[%s] plenary test current file'):format(UNIQUE_NAME) })
+    end
+
+    if opts.abort_mode_key then
+      vim.keymap.set('n', opts.abort_mode_key, function()
+        vim.b.localleader = nil
+        vim.env.PLENARY_PATH = nil
+        vim.env.TEST_PATH = nil
+        vim.api.nvim_del_keymap('n', opts.test_key)
+        vim.api.nvim_del_keymap('n', opts.abort_mode_key)
+        vim.notify('Aborted PlenaryTestMode.', vim.log.levels.INFO, { 'PlenaryTestMode' })
+      end, { desc = ('[%s] aborted PlenaryTestMode'):format(UNIQUE_NAME) })
     end
   end, {})
 end
