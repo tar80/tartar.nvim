@@ -5,6 +5,14 @@ local M = {}
 ---@param contents string|string[] The contents to write to the file.
 ---@return boolean ok, string? message
 function M.write(path, contents)
+  local dir = vim.fs.dirname(path)
+  local stat = vim.uv.fs_stat(dir)
+  if not stat or stat.type ~= 'directory' then
+    local ok = pcall(vim.fn.mkdir, dir, 'p')
+    if not ok then
+      return false, 'Failed to create directory: ' .. dir
+    end
+  end
   local handle, message = io.open(path, 'w+')
   if not handle then
     return false, message
@@ -17,7 +25,7 @@ function M.write(path, contents)
   handle:write(contents)
   handle:close()
 
-  return true, 'created file.'
+  return true, 'Created the file.'
 end
 
 return M

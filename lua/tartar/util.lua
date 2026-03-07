@@ -7,8 +7,10 @@ local M = {}
 ---@param ... T
 ---@return T|nil
 function M.value_or_nil(bool, ...)
-  return vim.F.ok_or_nil(bool, ...)
-  -- return bool == true and value or nil
+  if bool == true then
+    return ...
+  end
+  return nil
 end
 
 -- Returns a closure for formatting a message with a given "name".
@@ -61,7 +63,11 @@ local rgx_fileext = '^.*%.'
 ---@param filepath string The full path from which to extract the filename.
 ---@return string, number - The extracted extension, and replacement count.
 function M.extract_fileext(filepath)
-  return filepath:gsub(rgx_fileext, '', 1)
+  local ext, count = filepath:gsub(rgx_fileext, '', 1)
+  if count == 0 then
+    ext = ''
+  end
+  return ext, count
 end
 
 -- Adds an element to a list within a table. If the specified key does not exist, a new key is created.
@@ -70,6 +76,9 @@ end
 ---@param ... any The value to be inserted and its position in the list.
 ---@return nil
 function M.tbl_insert(tbl, key, ...)
+  if type(tbl) ~= 'table' then
+    error("Argument 'tbl' must be a table.")
+  end
   local args = { ... }
   local pos, value
   if #args < 2 then

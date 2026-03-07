@@ -54,6 +54,7 @@ end
 ---Get currently selected visual range on zero-based index.
 ---@param base_row integer Whether the starting row is 0 or 1
 ---@param base_col integer Whether the starting column is 0 or 1
+---@param is_blockwise boolean Whether the selection is blockwise
 ---@return WinPos,WinPos,boolean
 function M.get_selected_range(base_row, base_col, is_blockwise)
   base_row = base_row == 1 and 0 or 1
@@ -141,9 +142,12 @@ end
 ---@param name string
 ---@return boolean|nil
 function M.is_enable_user_vars(name)
-  local b = vim.b[name]
-  local g = vim.g[name]
-  return _is_truthy(b) or _is_truthy(g)
+  local b = _is_truthy(vim.b[name])
+  local g = _is_truthy(vim.g[name])
+  if b == false then
+    return g or b
+  end
+  return b or g
 end
 
 ---@param winid integer

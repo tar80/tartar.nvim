@@ -15,11 +15,20 @@ function M.to_rgb(hex)
 end
 
 ---Adjusts the brightness of an HSL color.
----@param luminance number[] HSL color table
+---@param hsl_color table HSL color table (e.g., {H, S, L})
 ---@param adjustment number Brightness adjustment value
----@return number
-function M.adjust_luminance(luminance, adjustment)
-  return math.max(0, math.min(100, luminance + adjustment))
+---@return table The adjusted HSL color table
+function M.adjust_luminance(hsl_color, adjustment)
+  local current_luminance = hsl_color[3]
+  local adjusted_luminance = math.max(0, math.min(100, current_luminance + adjustment))
+
+  local new_hsl_color = {}
+  for i, v in ipairs(hsl_color) do
+    new_hsl_color[i] = v
+  end
+  new_hsl_color[3] = adjusted_luminance
+
+  return new_hsl_color
 end
 
 ---Adjusts the contrast of a given hex color.
