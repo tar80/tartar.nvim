@@ -47,6 +47,13 @@ return function(UNIQUE_NAME, opts)
         test_path = test_dirnames[1]
       end
       test_path = ('%s/%s'):format(test_path, util.extract_filename(bufname):gsub('%.lua$', '_spec.lua'))
+
+      if not vim.uv.fs_stat(test_path) then
+        local fd = assert(vim.uv.fs_open(test_path, "w", 420))
+        vim.uv.fs_write(fd, "local assert = require('luassert')\nlocal stub = require('luassert.stub')\nlocal spy = require('luassert.spy')\n")
+        vim.uv.fs_close(fd)
+      end
+
       vim.cmd([[tabedit %]])
       vim.b.localleader = opts.localleader
       vim.cmd(([[bot split %s]]):format(test_path))
