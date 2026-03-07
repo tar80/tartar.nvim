@@ -142,44 +142,47 @@ local _align = {
 }
 _align.__index = _align
 
----@param ns integer
----@param hlgroup string
-return function(ns, hlgroup)
-  vim.validate('hlgroup', hlgroup, 'string', true)
-  local aligned_lines ---@type string[]?
-  local s, e = helper.get_selected_range(0, 0)
-  local is_blockwise = helper.is_blockwise()
-  local instance = setmetatable({
-    ns = ns,
-    bufnr = vim.api.nvim_get_current_buf(),
-    hlgroup = (hlgroup or 'IncSearch'),
-    lines = _get_expand_lines(s[1], e[1]),
-    startline = s[1],
-    endline = e[1] + 1,
-    ctx = { '', '' },
-  }, _align)
-  vim.on_key(function(_, typed)
-    local _ctx = instance:input(typed, true)
+return {
+  ---@param ns integer
+  ---@param hlgroup string
+  factory = function(ns, hlgroup)
+    vim.validate('hlgroup', hlgroup, 'string', true)
+    local aligned_lines ---@type string[]?
+    local s, e = helper.get_selected_range(0, 0)
+    local is_blockwise = helper.is_blockwise()
+    local instance = setmetatable({
+      ns = ns,
+      bufnr = vim.api.nvim_get_current_buf(),
+      hlgroup = (hlgroup or 'IncSearch'),
+      lines = _get_expand_lines(s[1], e[1]),
+      startline = s[1],
+      endline = e[1] + 1,
+      ctx = { '', '' },
+    }, _align)
+    vim.on_key(function(_, typed)
+      local _ctx = instance:input(typed, true)
 
-    if not _ctx then
-      return
-    end
+      if not _ctx then
+        return
+      end
 
-    if type(_ctx) == 'boolean' then
+      if type(_ctx) == 'boolean' then
+        instance:end_align()
+        return
+      end
+      instance:clear_namespace()
+      if _ctx ~= '' then
+        local block = is_blockwise and { s[2], e[2] }
+        aligned_lines = instance:align(_ctx, block)
+      end
+      vim.cmd.redraw()
+    end, ns, {})
+    vim.ui.input({ prompt = 'align(regex): ' }, function(input)
+      if input and input ~= '' and aligned_lines then
+        vim.api.nvim_buf_set_lines(0, instance.startline, instance.endline, false, aligned_lines)
+      end
       instance:end_align()
-      return
-    end
-    instance:clear_namespace()
-    if _ctx ~= '' then
-      local block = is_blockwise and { s[2], e[2] }
-      aligned_lines = instance:align(_ctx, block)
-    end
-    vim.cmd.redraw()
-  end, ns, {})
-  vim.ui.input({ prompt = 'align(regex): ' }, function(input)
-    if input and input ~= '' and aligned_lines then
-      vim.api.nvim_buf_set_lines(0, instance.startline, instance.endline, false, aligned_lines)
-    end
-    instance:end_align()
-  end)
-end
+    end)
+  end,
+  _align = _align,
+}

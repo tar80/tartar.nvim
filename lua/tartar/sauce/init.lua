@@ -7,7 +7,7 @@ return {
     return require('tartar.sauce.abbrev')
   end,
   align = function(hlgroup)
-    return require('tartar.sauce.align')(ns, hlgroup)
+    return require('tartar.sauce.align').factory(ns, hlgroup)
   end,
   foldtext = function(separator)
     require('tartar.sauce.foldtext')(UNIQUE_NAME, augroup, separator)
