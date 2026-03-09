@@ -25,6 +25,21 @@ return function(UNIQUE_NAME, opts)
     end
   end
 
+  local function _plenary_test_file_do()
+    require('plenary.test_harness').test_file(vim.env.TEST_PATH)
+
+    vim.schedule(function()
+      if vim.api.nvim_get_option_value('filetype', {}) == 'PlenaryTestPopup' then
+        vim.api.nvim_buf_set_keymap(0, 'n', 'q', 'callback', {
+          callback = function()
+            vim.api.nvim_buf_delete(0, { force = true })
+          end,
+          desc = 'Overwrite plenary default quit keymap by tartar',
+        })
+      end
+    end)
+  end
+
   vim.api.nvim_create_user_command('PlenaryTestMode', function()
     if vim.bo.filetype == '' then
       vim.notify('Not applicable to scratch buffers', vim.log.levels.ERROR, { title = 'PlenaryTestMode' })
@@ -46,11 +61,17 @@ return function(UNIQUE_NAME, opts)
       else
         test_path = test_dirnames[1]
       end
-      test_path = ('%s/%s'):format(test_path, util.extract_filename(bufname):gsub('%.lua$', '_spec.lua'))
+      local filename = bufname:find('init.lua', 1, true) and vim.fs.dirname(bufname) or bufname:gsub('%.lua$', '', 1)
+      test_path = ('%s/%s_spec.lua'):format(test_path, util.extract_filename(filename))
 
       if not vim.uv.fs_stat(test_path) then
-        local fd = assert(vim.uv.fs_open(test_path, "w", 420))
-        vim.uv.fs_write(fd, "local assert = require('luassert')\nlocal stub = require('luassert.stub')\nlocal spy = require('luassert.spy')\n")
+        local fd = assert(vim.uv.fs_open(test_path, 'w', 420))
+        vim.uv.fs_write(
+          fd,
+          "local assert = require('luassert')\n"
+            .. "local stub = require('luassert.stub')\n"
+            .. "local spy = require('luassert.spy')\n"
+        )
         vim.uv.fs_close(fd)
       end
 
@@ -67,9 +88,9 @@ return function(UNIQUE_NAME, opts)
         local _bufname = vim.api.nvim_buf_get_name(0)
         if _bufname:find('_spec.lua$') then
           vim.env.TEST_PATH = _bufname
-          require('plenary.test_harness').test_file(vim.env.TEST_PATH)
+          _plenary_test_file_do()
         elseif vim.uv.fs_stat(vim.env.TEST_PATH) then
-          require('plenary.test_harness').test_file(vim.env.TEST_PATH)
+          _plenary_test_file_do()
         else
           vim.notify('Path not found.', vim.log.levels.ERROR, { 'PlenaryTestHarness' })
         end
