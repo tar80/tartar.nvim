@@ -23,7 +23,7 @@ function M.buf_get_clients()
   local t = {
     count = #clients,
     names = {},
-    ids = {}
+    ids = {},
   }
   vim.iter(clients):each(function(client)
     local name = client.name
@@ -42,7 +42,7 @@ function M.buf_detach_clients(clients, name)
     if name and clients[id].name ~= name then
       return
     end
-    lsp.buf_detach_client(0,id)
+    lsp.buf_detach_client(0, id)
   end)
 end
 

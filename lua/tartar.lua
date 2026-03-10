@@ -27,7 +27,7 @@ local function _require(module)
     return mod
   end
 
-  return type(package.loaded[module]) == "table" and package.loaded[module]
+  return type(package.loaded[module]) == 'table' and package.loaded[module]
     or setmetatable({}, {
       __index = function(_, key)
         return load()[key]

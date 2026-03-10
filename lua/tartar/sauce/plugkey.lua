@@ -55,4 +55,3 @@ return function(mode, name, prefix_key, is_repeatable)
     end
   end
 end
-
